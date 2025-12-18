@@ -6,13 +6,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 export default async function handler(req: any, res: any) {
-  // CORS universal pentru test (permite Base)
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  // === CORS fix pentru preflight și POST ===
+  const allowedOrigin = "https://lumiloai.com"; // site-ul tău
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Preflight request
-  if (req.method === "OPTIONS") return res.status(200).end();
+  // răspunde imediat la preflight OPTIONS
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });

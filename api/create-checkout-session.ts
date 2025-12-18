@@ -6,13 +6,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 export default async function handler(req: any, res: any) {
-  // === CORS fix pentru preflight și POST ===
-  const allowedOrigin = "https://lumiloai.com"; // site-ul tău
+  // === CORS fix complet ===
+  const allowedOrigin = "https://lumiloai.com"; // domeniul tău
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // răspunde imediat la preflight OPTIONS
+  // Răspunde imediat la preflight OPTIONS
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -25,16 +25,12 @@ export default async function handler(req: any, res: any) {
     const { email, coupon } = req.body || {};
     if (!email) return res.status(400).json({ error: "Email is required" });
 
-    // Creează sesiunea Stripe Checkout
     const session = await stripe.checkout.sessions.create({
       customer_email: email,
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
-        {
-          price: "price_1SeZeWD7k1ynQsVYYXRHIqLB", // Price ID tău real
-          quantity: 1,
-        },
+        { price: "price_1SeZeWD7k1ynQsVYYXRHIqLB", quantity: 1 }
       ],
       discounts: coupon ? [{ coupon }] : [],
       success_url: "https://lumiloai.com/success",
@@ -43,7 +39,7 @@ export default async function handler(req: any, res: any) {
 
     res.status(200).json({ url: session.url });
   } catch (err: any) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to create checkout session. " + err.message });
+    console.error("Stripe error:", err);
+    res.status(500).json({ error: "Failed to create checkout session: " + err.message });
   }
 }

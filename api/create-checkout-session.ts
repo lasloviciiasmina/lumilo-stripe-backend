@@ -6,8 +6,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 export default async function handler(req: any, res: any) {
-  // === CORS fix complet ===
-  const allowedOrigin = "https://lumiloai.com"; // Domeniul tău
+  // === CORS fix complet pentru Base ===
+  const allowedOrigin = "https://lumiloai.com"; 
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");

@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 
 export default async function handler(req: any, res: any) {
   // === CORS fix complet ===
-  const allowedOrigin = "https://lumiloai.com"; // domeniul tău
+  const allowedOrigin = "https://lumiloai.com"; // Domeniul tău
   res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -25,6 +25,7 @@ export default async function handler(req: any, res: any) {
     const { email, coupon } = req.body || {};
     if (!email) return res.status(400).json({ error: "Email is required" });
 
+    // Creează sesiunea Stripe Checkout
     const session = await stripe.checkout.sessions.create({
       customer_email: email,
       mode: "subscription",

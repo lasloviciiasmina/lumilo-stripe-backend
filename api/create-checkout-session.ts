@@ -5,12 +5,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 export default async function handler(req: any, res: any) {
-  // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*"); // sau domeniul Base
+  // CORS headers pentru lumiloai.com
+  res.setHeader("Access-Control-Allow-Origin", "https://lumiloai.com");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Răspuns la preflight
+  // Preflight request
   if (req.method === "OPTIONS") return res.status(200).end();
 
   if (req.method !== "POST") {
@@ -19,7 +19,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      mode: "subscription", // abonament lunar
+      mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
         {
@@ -27,9 +27,10 @@ export default async function handler(req: any, res: any) {
           quantity: 1,
         },
       ],
-      discounts: req.body.coupon ? [{ coupon: req.body.coupon }] : [],
-      success_url: "https://SITE-UL-TAU.ro/success",
-      cancel_url: "https://SITE-UL-TAU.ro/cancel",
+      // dacă trimiti coupon: { coupon: "coupon_123ABC" } va fi aplicat
+      discounts: req.body?.coupon ? [{ coupon: req.body.coupon }] : [],
+      success_url: "https://lumiloai.com/success",
+      cancel_url: "https://lumiloai.com/cancel",
     });
 
     res.status(200).json({ url: session.url });
@@ -37,3 +38,4 @@ export default async function handler(req: any, res: any) {
     res.status(500).json({ error: err.message });
   }
 }
+

@@ -5,12 +5,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 export default async function handler(req: any, res: any) {
-  // CORS headers pentru lumiloai.com
+  // CORS headers corecte pentru Base / site-ul tău
   res.setHeader("Access-Control-Allow-Origin", "https://lumiloai.com");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Preflight request
+  // Preflight request (OPTIONS)
   if (req.method === "OPTIONS") return res.status(200).end();
 
   if (req.method !== "POST") {
@@ -27,8 +27,6 @@ export default async function handler(req: any, res: any) {
           quantity: 1,
         },
       ],
-      // dacă trimiti coupon: { coupon: "coupon_123ABC" } va fi aplicat
-      discounts: req.body?.coupon ? [{ coupon: req.body.coupon }] : [],
       success_url: "https://lumiloai.com/success",
       cancel_url: "https://lumiloai.com/cancel",
     });

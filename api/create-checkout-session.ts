@@ -35,6 +35,10 @@ export default async function handler(req: any, res: any) {
         { price: "price_1SeZeWD7k1ynQsVYYXRHIqLB", quantity: 1 }
       ],
       discounts: coupon ? [{ coupon }] : [],
+      
+      // ⚡ Permite codurile de reducere să apară în checkout
+      allow_promotion_codes: true,
+
       success_url: "https://lumiloai.com/success",
       cancel_url: "https://lumiloai.com/cancel",
     });
